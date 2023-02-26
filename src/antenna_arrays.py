@@ -1,5 +1,7 @@
-import numpy as np
 from typing import List, Union
+
+import numpy as np
+
 
 class UniformLinearArray:
     def __init__(
@@ -27,14 +29,14 @@ class UniformLinearArray:
 
     def steering_vec_der(
         self,
-        angle: Union[float, List[float], np.ndarray],
+        angle: float,
         wavelength: float = 1,
     ) -> np.ndarray:
         stv = self.steering_vector(angle=angle, wavelength=wavelength)
         cos = np.cos(angle)
-        stvd = 1j * 2 * np.pi * (self.element_locations/ wavelength) * cos * stv
+        stvd = 1j * 2 * np.pi * (self.element_locations / wavelength) * cos * stv
         return stvd
-    
+
     def steering_matrix(
         self,
         grid: Union[List[float], np.ndarray],

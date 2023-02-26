@@ -18,27 +18,27 @@ num_jobs: -1
 
 num_paths: 3
 
-path_gain: 
+path_gain:
   name: path_gain
   sigma: 1e-1
 
-delay: 
+delay:
   name: delay
   sigma: 1e-7
 
-doppler: 
+doppler:
   name: doppler
   sigma: 50
 
-aoa: 
+aoa:
   name: aoa
   sigma: 1e-1
 
-aod: 
+aod:
   name: aod
   sigma: 1e-1
 
-data_symbol: 
+data_symbol:
   name: data_symbol
   sigma: 1
 

@@ -1,12 +1,15 @@
 import sys
-from os.path import dirname, abspath
+from os.path import abspath, dirname
+
+import numpy as np
+import pytest
+
 path = dirname(dirname(abspath(__file__)))
 sys.path.append(path)
 
-import pytest
-import numpy as np
-from src.utils import freq2wavelen
+
 from src.antenna_arrays import UniformLinearArray
+from src.utils import freq2wavelen
 
 
 @pytest.mark.parametrize("num_ant_tx", [1, 3, 8])

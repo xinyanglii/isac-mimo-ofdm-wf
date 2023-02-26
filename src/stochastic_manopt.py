@@ -1,11 +1,12 @@
-import pymanopt as pm
-from pymanopt.optimizers import ConjugateGradient
-import numpy as np
-from copy import deepcopy
-from pymanopt.tools import printer
 import time
+from copy import deepcopy
+
+import numpy as np
+import pymanopt as pm
 import torch
 from pymanopt.manifolds.manifold import RiemannianSubmanifold
+from pymanopt.optimizers import ConjugateGradient
+from pymanopt.tools import printer
 
 
 class _ComplexSphereBase(RiemannianSubmanifold):
@@ -109,45 +110,47 @@ class ComplexSphere(_ComplexSphereBase):
 
 
 class StochasticREPMSConjugateGradient(ConjugateGradient):
-    def __init__(self, 
-                 beta_rule: str = "HestenesStiefel", 
-                 orth_value=np.inf, 
-                 line_searcher=None, 
-                 num_points_per_iter=10, 
-                 initial_penalty=1.,
-                 penalty_update=2,
-                 max_penalty=2**20,
-                 initial_smooth_factor=0.1,
-                 min_smooth_factor=1e-6,
-                 smooth_factor_update=None,
-                 violation_tolerance=1e-2, # if inequality constraint value below this threshold, stop updating
-                 *args, 
-                 **kwargs):
+    def __init__(
+        self,
+        beta_rule: str = "HestenesStiefel",
+        orth_value=np.inf,
+        line_searcher=None,
+        num_points_per_iter=10,
+        initial_penalty=1.0,
+        penalty_update=2,
+        max_penalty=2**20,
+        initial_smooth_factor=0.1,
+        min_smooth_factor=1e-6,
+        smooth_factor_update=None,
+        violation_tolerance=1e-2,
+        *args,
+        **kwargs,
+    ):
         super().__init__(beta_rule, orth_value, line_searcher, *args, **kwargs)
-        
+
         self.num_points_per_iter = num_points_per_iter
-        
+
         self.penalty0 = initial_penalty
         self.penalty_update = penalty_update
-        self.max_penalty=max_penalty
-        
+        self.max_penalty = max_penalty
+
         self.smooth0 = initial_smooth_factor
         self.min_smooth = min_smooth_factor
         if not smooth_factor_update:
             self.smooth_update = (self.min_smooth / self.smooth0) ** (1 / 30)
         else:
             self.smooth_update = smooth_factor_update
-        
+
         self.violation_tolerance = violation_tolerance
 
     # TODO: implement equality constrained optimization
     def run(
         self,
         manifold,
-        base_problem, # fun(x, params_list), x the variable to be optimized on the manifold, params_list the list of parameters to be sampled during optimization
+        base_problem,
         *,
-        param_sampler_list=[], # list of param_sampler, each can be called as param_sampler.sample(size) to sample parameters, recommended as torch.distributions object
-        ineq_constraint=None, # function that computes inequality constraint value, input 
+        param_sampler_list=[],
+        ineq_constraint=None,
         initial_point=None,
         reuse_line_searcher=False,
     ):
@@ -158,7 +161,7 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
         objval_convergence = []
         max_ineqval_convergence = []
         gradient_norm_convergence = []
-        
+
         params_list = [sampler.sample((self.num_points_per_iter,)) for sampler in param_sampler_list]
         problem = self.update_problem(manifold, base_problem, params_list, alpha, u, ineq_constraint)
 
@@ -202,10 +205,12 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
         # record problem convergence
         objval = base_problem(torch.from_numpy(x), params_list).numpy(force=True)
         objval_convergence.append(objval)
-        max_ineqval = ineq_constraint(torch.from_numpy(x), params_list).max().numpy(force=True) if ineq_constraint else 0
+        max_ineqval = (
+            ineq_constraint(torch.from_numpy(x), params_list).max().numpy(force=True) if ineq_constraint else 0
+        )
         max_ineqval_convergence.append(max_ineqval)
         gradient_norm_convergence.append(gradient_norm)
-        
+
         # Initial descent direction is the negative gradient.
         descent_direction = -Pgrad
 
@@ -315,16 +320,20 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
 
             x = newx
 
-            if ineq_constraint and alpha and (ineq_constraint(torch.from_numpy(x), params_list) > self.violation_tolerance).any():
+            if (
+                ineq_constraint
+                and alpha
+                and (ineq_constraint(torch.from_numpy(x), params_list) > self.violation_tolerance).any()
+            ):
                 alpha = min(self.penalty_update * alpha, self.max_penalty)
                 u = max(self.min_smooth, self.smooth_update * u)
 
             penalty_list.append(alpha)
             smoothing_list.append(u)
-            
+
             params_list = [sampler.sample((self.num_points_per_iter,)) for sampler in param_sampler_list]
             problem = self.update_problem(manifold, base_problem, params_list, alpha, u, ineq_constraint)
-            
+
             manifold = problem.manifold
             cost_fun = problem.cost
             gradient = problem.riemannian_gradient
@@ -334,11 +343,13 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
             gradient_norm = manifold.norm(newx, grad)
             Pgrad = problem.preconditioner(newx, grad)
             gradPgrad = manifold.inner_product(newx, grad, Pgrad)
-            
+
             # record problem convergence
             objval = base_problem(torch.from_numpy(x), params_list).numpy(force=True)
             objval_convergence.append(objval)
-            max_ineqval = ineq_constraint(torch.from_numpy(x), params_list).max().numpy(force=True) if ineq_constraint else 0
+            max_ineqval = (
+                ineq_constraint(torch.from_numpy(x), params_list).max().numpy(force=True) if ineq_constraint else 0
+            )
             max_ineqval_convergence.append(max_ineqval)
             gradient_norm_convergence.append(gradient_norm)
 
@@ -352,17 +363,17 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
             step_size=step_size,
             gradient_norm=gradient_norm,
         )
-        
-        return {"manopt_result": result, 
-                "objval_convergence": np.array(objval_convergence), 
-                "max_ineqval_convergence": np.array(max_ineqval_convergence), 
-                "gradient_norm_convergence": np.array(gradient_norm_convergence),
-                "penalty_factors": np.array(penalty_list),
-                "smoothing_factors": np.array(smoothing_list)
-                }
+
+        return {
+            "manopt_result": result,
+            "objval_convergence": np.array(objval_convergence),
+            "max_ineqval_convergence": np.array(max_ineqval_convergence),
+            "gradient_norm_convergence": np.array(gradient_norm_convergence),
+            "penalty_factors": np.array(penalty_list),
+            "smoothing_factors": np.array(smoothing_list),
+        }
 
     def update_problem(self, manifold, base_problem, params_list, alpha, u, ineq_constraint):
-
         @pm.function.pytorch(manifold)
         def cost(X):
             if alpha:
@@ -377,5 +388,3 @@ class StochasticREPMSConjugateGradient(ConjugateGradient):
 
         problem = pm.Problem(manifold, cost)
         return problem
-    
-    

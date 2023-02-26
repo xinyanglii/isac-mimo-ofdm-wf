@@ -1,10 +1,12 @@
-# Cookiecutter and Sphinx
-h5py
-typing-extensions
-wheel
+
+--find-links https://download.pytorch.org/whl/torch_stable.html
 
 einops
 einsum
+# Cookiecutter and Sphinx
+h5py
+
+hydra-core
 joblib
 matplotlib
 
@@ -15,8 +17,6 @@ pymanopt
 pytest>=6.2.4
 SciencePlots
 scipy
-
---find-links https://download.pytorch.org/whl/torch_stable.html
 torch>=1.13.0+cpu
-
-hydra-core
+typing-extensions
+wheel

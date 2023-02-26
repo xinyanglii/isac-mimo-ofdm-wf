@@ -1,7 +1,12 @@
-import numpy as np
+from __future__ import annotations
+
 from dataclasses import dataclass
+
+import numpy as np
 from scipy.constants import c
+
 from .antenna_arrays import UniformLinearArray
+
 
 @dataclass
 class OFDMConfig:
@@ -35,8 +40,8 @@ class OFDMConfig:
     @property
     def sampling_time(self):
         return self.symbol_time / self.Nfft
-    
-    
+
+
 class MultiPathChannelConfig:
     def __init__(
         self,
@@ -131,7 +136,7 @@ class MultiPathChannelConfig:
         fc = carrier_frequency if carrier_frequency else 3e9
         assert fc > 0
         path_gains = np.random.normal(size=num_paths) + 1j * np.random.normal(size=num_paths)
-        
+
         aods = np.random.uniform(-np.pi / 2, np.pi / 2, size=num_paths)
         aoas = np.random.uniform(-np.pi / 2, np.pi / 2, size=num_paths)
 

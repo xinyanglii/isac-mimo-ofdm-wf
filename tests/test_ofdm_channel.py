@@ -1,15 +1,18 @@
 import sys
-from os.path import dirname, abspath
+from os.path import abspath, dirname
+
 path = dirname(dirname(abspath(__file__)))
 sys.path.append(path)
 
-import pytest
 import numpy as np
-from src.ofdmchannel import OFDMConfig, MultiPathChannelConfig, OFDMBeamSpaceChannel
+import pytest
+
 from src.antenna_arrays import UniformLinearArray
+from src.ofdmchannel import MultiPathChannelConfig, OFDMBeamSpaceChannel, OFDMConfig
+
 
 @pytest.mark.parametrize("Nfft", [31, 64] + [1, 2])
-@pytest.mark.parametrize("num_guard_carriers", [(0,0), (1,3)])
+@pytest.mark.parametrize("num_guard_carriers", [(0, 0), (1, 3)])
 def test_ofdm_config(Nfft, num_guard_carriers):
     scs = 15e3
     if Nfft <= sum(num_guard_carriers):
@@ -25,7 +28,7 @@ def test_ofdm_config(Nfft, num_guard_carriers):
 
         num_data_carriers = Nfft - sum(num_guard_carriers)
         assert num_data_carriers == ofdmconf.num_data_carriers
-        
+
 
 @pytest.mark.parametrize("num_paths", [1, 3, 15])
 def test_mpc_config(num_paths):
@@ -53,13 +56,13 @@ def test_mpc_config(num_paths):
         == len(config.aods)
         == num_paths
     )
-    
-    
-@pytest.mark.parametrize("num_paths", [1,3,5])
-@pytest.mark.parametrize("num_ant_tx", [1,3,8])
-@pytest.mark.parametrize("num_ant_rx", [1,3,8])
-@pytest.mark.parametrize("num_carriers", [1,52,128])
-@pytest.mark.parametrize("num_symbols", [1,3,14])
+
+
+@pytest.mark.parametrize("num_paths", [1, 3, 5])
+@pytest.mark.parametrize("num_ant_tx", [1, 3, 8])
+@pytest.mark.parametrize("num_ant_rx", [1, 3, 8])
+@pytest.mark.parametrize("num_carriers", [1, 52, 128])
+@pytest.mark.parametrize("num_symbols", [1, 3, 14])
 def test_beam_space_channel(num_paths, num_ant_tx, num_ant_rx, num_carriers, num_symbols):
     scs = 15e3
     sampling_time = 1 / scs / num_carriers
