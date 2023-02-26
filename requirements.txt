@@ -1,0 +1,22 @@
+# Cookiecutter and Sphinx
+h5py
+typing-extensions
+wheel
+
+einops
+einsum
+joblib
+matplotlib
+
+numpy>=1.23.0
+opt_einsum
+pre-commit>=2.19.0
+pymanopt
+pytest>=6.2.4
+SciencePlots
+scipy
+
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch>=1.13.0+cpu
+
+hydra-core
