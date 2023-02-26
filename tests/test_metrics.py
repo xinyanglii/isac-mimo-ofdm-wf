@@ -57,11 +57,11 @@ def test_fim():
     assert torch.allclose(torch.slogdet(fim_complex)[1] * 2, torch.slogdet(fim_real)[1], rtol=1e-2)
     C_xi, C_s = get_prior_cov(cfg)
     logdet_s = torch.linalg.slogdet(fim_complex + torch.linalg.inv(C_s))
-    
-    assert torch.allclose(C_xi, torch.diag(C_xi.diag()))
-    assert torch.allclose(logdet_s[0].imag, torch.tensor(0.)) and (logdet_s[0].real > 0).all()
 
-    I = torch.eye(cfg.num_streams)
-    I1, I2 = fim_p(I, I)
+    assert torch.allclose(C_xi, torch.diag(C_xi.diag()))
+    assert torch.allclose(logdet_s[0].imag, torch.tensor(0.0)) and (logdet_s[0].real > 0).all()
+
+    eyem = torch.eye(cfg.num_streams)
+    I1, I2 = fim_p(eyem, eyem)
     assert torch.allclose(I1, I2)
-    assert torch.allclose(I, I1)
+    assert torch.allclose(eyem, I1)
