@@ -1,0 +1,71 @@
+repos:
+# basic pre-commit hooks
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: requirements-txt-fixer
+# add trailing comma
+-   repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.4.0
+    hooks:
+    -   id: add-trailing-comma
+        args: [--py36-plus]
+# do pyupgrade
+# -   repo: https://github.com/asottile/pyupgrade
+#     rev: v3.2.3
+#     hooks:
+#     -   id: pyupgrade
+#         args: [--py36-plus]
+
+# isort
+- repo: https://github.com/pycqa/isort
+  rev: 5.12.0
+  hooks:
+    - id: isort
+      name: isort (python)
+      args: ["--profile", "black", --line-length=120]
+
+# black
+- repo: https://github.com/ambv/black
+  rev: 23.1.0
+  hooks:
+    - id: black
+      args: # arguments to configure black
+        - --line-length=120
+        - --include='\.pyi?$'
+
+        # these folders wont be formatted by black
+        - --exclude="""\.git |
+          \.__pycache__|
+          \.hg|
+          \.mypy_cache|
+          \.tox|
+          \.venv|
+          _build|
+          buck-out|
+          build|
+          dist"""
+      language_version: python3.10
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.0.1
+    hooks:
+    -   id: mypy
+        additional_dependencies: [types-all]
+        exclude: tests/
+
+
+# check if code is clean using flake8
+-   repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+    -   id: flake8
+        args: # arguments to configure flake8
+        # making isort line length compatible with black
+        - "--max-line-length=120"
+        - "--max-complexity=18"
+        - "--select=B,C,E,F,W,T4,B9"
+        - "--ignore=W503, E203, F811, E402"

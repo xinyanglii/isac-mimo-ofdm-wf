@@ -1,0 +1,58 @@
+num_ant_tx: 8
+num_ant_rx: 8
+num_streams: 3
+num_carriers: 128
+num_symbols: 14
+subcarrier_spacing: 15e3
+power_signal: 10.
+snrdb: -10.
+fc: 6e9
+
+multi_obj_factor: 1e-3
+num_points_per_iter: 3
+max_iterations: 50
+verbose: 0
+
+num_monte_carlo: 100
+num_jobs: -1
+
+num_paths: 3
+
+path_gain:
+  name: path_gain
+  sigma: 1e-1
+
+delay:
+  name: delay
+  sigma: 1e-7
+
+doppler:
+  name: doppler
+  sigma: 50
+
+aoa:
+  name: aoa
+  sigma: 1e-1
+
+aod:
+  name: aod
+  sigma: 1e-1
+
+data_symbol:
+  name: data_symbol
+  sigma: 1
+
+param_to_est:
+  - ${path_gain.name}
+  - ${delay.name}
+  - ${doppler.name}
+  - ${aoa.name}
+  - ${aod.name}
+
+
+output_dir: ${hydra:runtime.output_dir}
+
+hydra:
+  sweep:
+    dir: multirun/${hydra.job.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.override_dirname}
