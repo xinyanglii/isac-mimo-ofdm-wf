@@ -26,7 +26,7 @@ figsize = plt.rcParams["figure.figsize"]
 
 dir = "./multirun/manopt_unconstrained/2023-04-24/15-47-00/"
 multi_obj_factors_list = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7000000000000001, 0.8, 0.9, 1.0]
-num_points_per_iter_list = [1, 10, 30, 50]
+num_points_per_iter_list = [1, 10, 50, 100]
 
 
 def plot_with_std(ax, x, arr, color, tol=0.3, label=None):

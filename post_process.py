@@ -10,14 +10,14 @@ from src.metrics import obj_bfim
 from src.prepare_sim import get_sampler_list
 from src.stochastic_manopt import ComplexSphere
 
-dir = "./multirun/manopt_unconstrained/2023-04-24/15-47-00/"  # change it to your multirun results path
+dir = "./multirun/manopt_unconstrained/2023-04-27/11-36-26/"  # change it to your multirun results path
 
 hydra.core.global_hydra.GlobalHydra.instance().clear()
 initialize(version_base=None, config_path=dir)
 mcfg = compose(config_name="multirun", return_hydra_config=True)
 
 multi_obj_factors_list = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7000000000000001, 0.8, 0.9, 1.0]
-num_points_per_iter_list = [1, 10, 30, 50]
+num_points_per_iter_list = [1, 10, 50, 100]
 
 data_path = os.path.join("./data", f"mpc_config_set_paths_{mcfg.num_paths}_montecarlo_{mcfg.num_monte_carlo}.npy")
 mpc_config_set = np.load(data_path, allow_pickle=True)

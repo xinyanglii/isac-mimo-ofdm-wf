@@ -17,7 +17,7 @@ pip install -r ./requirements.txt
 
 The main script is `./manopt_unconstrained.py`. Multi-configuration simualtion is enabled by the `multirun` machanism of [hydra](https://hydra.cc/). For example, to run the simualtion with the same configurations as our paper, run the following command
 ```
-python ./manopt_unconstrained.py -m num_points_per_iter=1,10,30,50 multi_obj_factor=0,1e-4,2e-4,4e-4,8e-4,16e-4,32e-4,64e-4,128e-4,256e-4,512e-4,1024e-4
+python ./manopt_unconstrained.py -m num_points_per_iter=1,10,50,100 multi_obj_factor=multi_obj_factor='range(0,1.01,0.1)'
 ```
 The adjustable configurations are found in `./config.yaml`.
 
