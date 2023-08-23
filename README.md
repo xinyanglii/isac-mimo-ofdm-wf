@@ -1,7 +1,7 @@
 # isac-mimo-ofdm-wf
 
 ## Introduction
-This is the simulation code repository for the paper xxx (coming soon after accepted).
+This is the simulation code repository for the paper **Optimal Linear Precoder Design for MIMO-OFDM Integrated Sensing and Communications Based on Bayesian Cramér-Rao Bound**, already accepted by [IEEE Globecom 2023](https://globecom2023.ieee-globecom.org/).
 
 ## How To Use
 To reproduce the results in the paper, first create a conda environment
